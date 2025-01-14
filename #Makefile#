@@ -1,0 +1,10 @@
+TEST_FILE = 
+
+all: 
+
+clean:
+	rm -rf bin/*
+	
+cleandoc:
+	rm -rf doc/*
+

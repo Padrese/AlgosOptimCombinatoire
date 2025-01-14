@@ -1,5 +1,5 @@
-# AlgosOptimCombinatoire
+# CombinatorialOptimAlgorithms
 
-Projet rédigé en langage Java consistant en l'implémentation d'une hiérarchie de classes associée à différents types de graphes ainsi qu'à l'implémentation d'algorithmes avancés tirés de l'optimisation combinatoire.
+Project written in Java, consisting in the implementation of a class hierarchy associated with different types of graphs, as well as the implementation of advanced algorithms drawn from combinatorial optimization.
 
-L'algoeithme d'Edmonds-Karp pour résoudre le problème du flot de valeur maximale est en cours d'implémentation. 
+The Edmonds-Karp algorithm for solving the maximum value flow problem is currently being implemented. 
