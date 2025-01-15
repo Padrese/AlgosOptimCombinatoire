@@ -1,5 +1,7 @@
 package test;
 
+import java.util.TreeMap;
+
 import graph.*;
 
 public class TestDirectedGraph {
@@ -12,7 +14,7 @@ public class TestDirectedGraph {
 		Vertex s4 = new Vertex("4");
 		Graph g = new DirectedGraph();
 		
-		g.addVertex(s1); //Ajout des sommets dans le graphe
+		g.addVertex(s1);
 		g.addVertex(s2);
 		g.addVertex(s3);
 		g.addVertex(s4);
@@ -28,21 +30,27 @@ public class TestDirectedGraph {
 		g.addEdge(a4);
 		g.addEdge(a5);
 		System.out.println("Graph G = (V,A): \n");
-		System.out.println(g.toStringFromSource(s1));
+		System.out.println(g);
 		
 		//We change the value of the flow on an edge
-		//g.setCstListeX(a1,2);
-		a1.setValx(2); //TODO: à tester
+		a1.setValx(2);
+		
+		System.out.println("BFS search on G: \n");
+		TreeMap<Integer, Vertex> g_bfs = g.breadth_first_search(s1); //BFS test
+		for (Vertex s: g_bfs.values()) {
+			System.out.println(s);
+		}
+		System.out.println("\n");
 		
 		//Deleting a vertex 
 		g.delVertex(s3);
 		System.out.println("Graph G = (V,A) after deleting s3: \n");
-		System.out.println(g.toStringFromSource(s1));
+		System.out.println(g);
 		
 		//Deleting an edge
 		g.delEdge(a1);
-		System.out.println("Graph G = (V,A) after deleting 1-4: \n");
-		System.out.println(g.toStringFromSource(s1));
+		System.out.println("Graph G = (V,A) after deleting edge 1-4: \n");
+		System.out.println(g);
 		
 		g.delEdge(a4); //Raises an exception because a4 doesn't exist anymore in G
 	}

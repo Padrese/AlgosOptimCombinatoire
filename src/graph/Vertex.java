@@ -19,7 +19,7 @@ public class Vertex {
 	 */
 	public Vertex(String id) throws IllegalArgumentException {
 		if (id == null) {
-			throw new IllegalArgumentException("L'identifiant d'un sommet ne peut pas être null!");
+			throw new IllegalArgumentException("Vertex identifier cannot be null");
 		}
 		this.id = id;
 		this.neighbors = new HashSet<Vertex>();
@@ -70,7 +70,7 @@ public class Vertex {
 	 * @param s
 	 * @throws IllegalArgumentException
 	 */
-	public void addVoisin(Vertex v) throws IllegalArgumentException{
+	public void addNeighbor(Vertex v) throws IllegalArgumentException{
 		if (v == null) {
 			throw new IllegalArgumentException("Vertex v as a parameter is null");
 		}
@@ -83,7 +83,7 @@ public class Vertex {
 	 * @param v
 	 * @throws IllegalArgumentException
 	 */
-	public void delVoisin(Vertex v) throws IllegalArgumentException {
+	public void delNeighbor(Vertex v) throws IllegalArgumentException {
 		if (! this.neighbors.contains(v)) {
 			throw new IllegalArgumentException("Le sommet passé en paramètre n'est pas voisin du sommet " + this.id);
 		}

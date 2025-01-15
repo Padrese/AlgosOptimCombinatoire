@@ -19,8 +19,8 @@ public class UndirectedGraph extends Graph{
 			throw new IllegalArgumentException("Edge e as a parameter is null");
 		}
 		this.edges.add(e);
-		e.getU().addVoisin(e.getV());
-		e.getV().addVoisin(e.getU());
+		e.getU().addNeighbor(e.getV());
+		e.getV().addNeighbor(e.getU());
 	}
 	
 	/**
@@ -40,22 +40,21 @@ public class UndirectedGraph extends Graph{
 		this.vertices.remove(v);
 		
 		//We delete the edges that entails vertex v
-		for (Vertex sommet: this.vertices) {
-			if (sommet.getNeighbors().contains(v)) {
-				Edge e = new Edge (sommet, v);
-				if (this.edges.contains(e)) {
-					this.edges.remove(e);
+		for (Vertex u: this.vertices) {
+			if (u.getNeighbors().contains(v)) {
+				try {
+					Edge e = new Edge (u, v);
+					this.delEdge(e);
+				}
+				/**
+				In the case of an undirected graph, an edge can count for both directions
+				but this implementation make defining it for u->v OR for v->u (one side only) sufficient
+				*/
+				catch(Exception IllegalArgumentException) { 
+					Edge e = new Edge(v, u);
+					this.delEdge(e);
 				}
 			}
-		}
-		
-		//We pay attention to the reciprocity here
-		for (Vertex voisin : v.getNeighbors()) {
-			Edge a = new Edge (v, voisin);
-			if (this.edges.contains(a)) {
-				this.edges.remove(a);
-			}
-			voisin.delVoisin(v); //We can look at triangles relationships in the graph and anticipate some deletions
 		}
 				
 	}
@@ -76,8 +75,8 @@ public class UndirectedGraph extends Graph{
 		this.edges.remove(e);
 		
 		//We delete the neighbors
-		e.getU().delVoisin(e.getV());
-		e.getV().delVoisin(e.getU()); //paying attention to equivalence here
+		e.getU().delNeighbor(e.getV());
+		e.getV().delNeighbor(e.getU()); //paying attention to equivalence here
 	}
 	
 }
