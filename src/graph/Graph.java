@@ -56,7 +56,7 @@ public abstract class Graph {
 	 * BFS algorithm starting from vertex v
 	 * @param v
 	 * @return vertices_bfs, a TreeMap having the order of insertion of the vertices as keys and the vertices as values.
-	 */
+	 
 	public TreeMap<Integer,Vertex> breadth_first_search(Vertex v) {
 		
 		TreeMap<Integer, Vertex> vertices_bfs = new TreeMap<Integer,Vertex>();
@@ -80,12 +80,63 @@ public abstract class Graph {
 		}
 		return vertices_bfs;
 	}
+	*/
+	
+	/**
+	 * BFS algorithm starting from vertex v
+	 * @param v
+	 * @return vertices_bfs, a TreeMap having the order of insertion of the vertices as keys and the vertices as values.
+	 */
+	public HashMap<Vertex,Vertex> breadth_first_search(Vertex v) {
+		
+		HashMap<Vertex, Vertex> vertices_paths = new HashMap<Vertex,Vertex>();
+		LinkedList<Vertex> vertex_queue = new LinkedList<Vertex>();
+		Set<Vertex> explored = new HashSet<Vertex>(); //Set of explored vertices
+		
+		vertex_queue.addFirst(v);
+		explored.add(v);
+		vertices_paths.put(v, (Vertex) null);
+		
+		while (! vertex_queue.isEmpty()) {
+			Vertex s = vertex_queue.removeLast();
+			explored.add(s);
+			for (Vertex neighbor : s.getNeighbors()) { 
+				if (! explored.contains(neighbor) && ! vertex_queue.contains(neighbor)) {
+					vertex_queue.addFirst(neighbor);
+					vertices_paths.put(neighbor, s);
+				}
+			}
+		}
+		return vertices_paths;
+	}
+	
+	public ArrayList<Edge> get_path(Vertex v, Vertex t){
+		HashMap<Vertex,Vertex> vertices_paths = this.breadth_first_search(v);
+		for (Vertex u: vertices_paths.keySet()) {
+			System.out.println(u + " " + vertices_paths.get(u));
+		}
+		if (! vertices_paths.keySet().contains(t)) {
+			return (ArrayList<Edge>) null;
+		}
+		else {
+			Vertex current_predecessor = vertices_paths.get(t);
+			Vertex current_vertex = t;
+			ArrayList<Edge> path = new ArrayList<Edge>();
+			while (current_predecessor != null) {
+				path.addFirst(new Edge(current_predecessor, current_vertex));
+				Vertex old_predecessor = current_predecessor;
+				current_predecessor = vertices_paths.get(current_predecessor);
+				current_vertex = old_predecessor;
+			}
+			return path;
+		}
+	}
 	
 	/**
 	 * BFS algorithm starting from vertex v and checking that a path exists from v to t
 	 * @param v,t
 	 * @return true or false whether a (v,t)-path exists or not.
-	 */
+	
 	public boolean breadth_first_search(Vertex v, Vertex t) {
 
 		LinkedList<Vertex> vertex_queue = new LinkedList<Vertex>();
@@ -108,6 +159,7 @@ public abstract class Graph {
 		}
 		return false;
 	}
+	*/
 	
 	/**
 	 * A mutator that modifies the list of vertices in the graph.

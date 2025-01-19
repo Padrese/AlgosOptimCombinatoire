@@ -88,9 +88,9 @@ public class DirectedGraph extends Graph {
 
 	public void edmondsKarp (Vertex start, Vertex end){
 		//Set<Vertex> min_cut;
-		Graph intermediary_graph;
-		Set<Edge> type_1_edges;
-		Set<Edge> type_2_edges;
+		DirectedGraph intermediary_graph;
+		HashMap<Edge, Integer> type_1_edges;
+		HashMap<Edge, Integer> type_2_edges;
 		Set<Integer> type_1_values;
 		Set<Integer> type_2_values;
 		
@@ -107,34 +107,32 @@ public class DirectedGraph extends Graph {
 			//Building the intermediary graph
 			intermediary_graph = new DirectedGraph();
 			intermediary_graph.setVertices(this.vertices);
-			type_1_edges = new HashSet<Edge>();
-			type_2_edges = new HashSet<Edge>();
-			type_1_values = new HashSet<Integer>();
-			type_2_values = new HashSet<Integer>();
+			type_1_edges = new HashMap<Edge, Integer>();
+			type_2_edges = new HashMap<Edge, Integer>();
 			
 			for (Edge e1: this.edges) {
 				//Type 1 edge
 				if (e1.getValx() < e1.getCstg()) {
 					intermediary_graph.addEdge(e1);
-					type_1_edges.add(e1);
-					type_1_values.add(e1.getCstg()-e1.getValx());
+					type_1_edges.put(e1, e1.getCstg()-e1.getValx());
 				}
 				//Type 2 edge
-				else if (e1.getValx() > 0) {
+				if (e1.getValx() > 0) {
 					Edge e2 = new Edge(e1.getV(),e1.getU(),e1.getCost(),e1.getValx(),e1.getCstf(),e1.getCstg());
 					intermediary_graph.addEdge(e2);
-					type_2_edges.add(e1);
-					type_2_values.add(e1.getValx());
+					type_2_edges.put(e1, e1.getValx());
 				}
 			}
 			
-			System.out.println("Type 1 values:");
-			System.out.println(type_1_values);
-			System.out.println("Type 2 values:");
-			System.out.println(type_2_values);
+			//TODO: Corriger cette histoire d'ambiguité des voisins entre le graphe initial et le graphe intermédiaire.
+			//IL faut construire les sommets et ses voisins dans ce graphe en fonction des arêtes de type 1 et 2.
+			
+			System.out.println("Graphe intermédiaire:");
+			System.out.println(intermediary_graph);
 			
 			//If the end vertex is not reachable from the start vertex, then we have found the optimal flow
-			if (! intermediary_graph.breadth_first_search(start, end)){
+			ArrayList<Edge> path = intermediary_graph.get_path(start, end);
+			if (path == null){
 				//min_cut = (Set<Vertex>) bfs_vertices.values();
 				//return min_cut;
 				return;
@@ -143,10 +141,37 @@ public class DirectedGraph extends Graph {
 			//Otherwise, we improve the value of the current flow
 			else {
 				
-				//TODO: Need to build explicitly build the unique (s,t)-path in the intermediary graph
+				//We compute eps_1 and eps_2 based on the (unique) path between the start node and the end node
+				
+				//These sets contain the values of the edges from the (start, end) path
+				type_1_values = new HashSet<Integer>();
+				type_2_values = new HashSet<Integer>();
 				
 				int eps_1;
 				int eps_2;
+				
+				System.out.println("(s,t)-chemin:");
+				for (int i=0; i < path.size(); ++i) {
+					System.out.println(path.get(i));
+				}
+				
+				for (int i=0; i < path.size(); ++i) {
+					Edge e = path.get(i);
+					if (type_1_edges.keySet().contains(e)) {
+						System.out.println("On entre ici");
+						type_1_values.add(type_1_edges.get(e));
+					}
+					else {
+						System.out.println("On entre là");
+						type_2_values.add(type_2_edges.get(e));
+					}
+				}
+				
+				System.out.println("Type 1 values:");
+				System.out.println(type_1_values);
+				System.out.println("Type 2 values:");
+				System.out.println(type_2_values);
+		
 				
 				if (! type_1_values.isEmpty()) {
 					eps_1 = Collections.min(type_1_values);
@@ -166,13 +191,19 @@ public class DirectedGraph extends Graph {
 				System.out.println("eps = " + eps);
 				
 				for(Edge e: this.edges) {
-					if (type_1_edges.contains(e)) {
+					if (! path.contains(e)) {
+						continue;
+					}
+					if (type_1_edges.keySet().contains(e)) {
 						e.setValx(e.getValx()+eps);
 					}
-					else if (type_2_edges.contains(e)) {
+					else if (type_2_edges.keySet().contains(e)) {
 						e.setValx(e.getValx()-eps);
 					}
 				}
+				
+				System.out.println("État courant du graphe initial:");
+				System.out.println(this);
 			}
 		}
 	}
